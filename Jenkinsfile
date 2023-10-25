@@ -68,7 +68,6 @@ spec:
         // change this later
         ACR_PULL_CREDENTIAL = 'ndop-acr-credential-tenant-secret'
     }
-        ...
     stages {
         stage('Prepare environment') {
             steps {
