@@ -23,29 +23,22 @@ spec:
       securityContext:
         runAsUser: 0
         privileged: true
-    - name: kubectl
-      image: docker.io/bitnami/kubectl:1.27.3
-      command:
-        - cat
-      tty: true
-      securityContext:
-        runAsUser: 0
-        privileged: true
-    - name: azure-cli
-      image: bitnami/azure-cli:latest
+        - name: aks-builder
+      image: ${imageName}/ndop_aks_builder:latest
       resources:
         requests:
-          memory: "256Mi"
+          memory: "2048Mi"
+          cpu: "2000m"
         limits:
-          memory: "256Mi"
+          memory: "2048Mi"
+          cpu: "2000m"
       imagePullPolicy: Always
       command:
         - sleep
       args:
         - infinity
-      securityContext:
-        runAsUser: 0
-        privileged: true
+  imagePullSecrets:
+    - name: $credentialSecret
   volumes:
     - name: m2-cache
       hostPath:
