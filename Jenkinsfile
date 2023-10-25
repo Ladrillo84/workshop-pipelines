@@ -101,6 +101,7 @@ spec:
                 }
             }
         }
+    }
 }
 
 def getPomVersion() {
