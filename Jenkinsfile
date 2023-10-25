@@ -57,7 +57,7 @@ spec:
         EPHTEST_BASE_URL = "http://$EPHTEST_CONTAINER_NAME:$APP_LISTENING_PORT".concat("/$APP_CONTEXT_ROOT".replace('//', '/'))
 
         // credentials
-        KUBERNETES_CLUSTER_CRED_ID = credentials('ndop-aks-name')
+        KUBERNETES_CLUSTER_CRED_ID = credentials('ndop-admins-rbac-sp')
         CONTAINER_REGISTRY_CRED = credentials('ndop-acr-credential-tenant')
         
         // credentials & external systems
