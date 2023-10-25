@@ -46,7 +46,7 @@ spec:
         APP_CONTEXT_ROOT = '/' // it should be '/' or '<some-context>/'
         APP_LISTENING_PORT = '8080'
         APP_JACOCO_PORT = '6300'
-        CONTAINER_REGISTRY_URL = 'docker.io'
+        CONTAINER_REGISTRY_URL = 'ndoptenant002acracr34668.azurecr.io'
         IMAGE_ORG = 'ndoptenant002acracr34668.azurecr.io' // change it to your own organization at Docker.io!
         IMAGE_NAME = "$IMAGE_ORG/$APP_NAME"
         IMAGE_SNAPSHOT = "$IMAGE_NAME:$APP_VERSION-snapshot-$BUILD_NUMBER" // tag for snapshot version
@@ -58,7 +58,7 @@ spec:
 
         // credentials
         KUBERNETES_CLUSTER_CRED_ID = credentials('ndop-aks-name')
-        CONTAINER_REGISTRY_CRED = credentials('ndop-acr-url-tenant')
+        CONTAINER_REGISTRY_CRED = credentials('ndop-acr-credential-tenant')
         
         // credentials & external systems
         AAD_SERVICE_PRINCIPAL = credentials('ndop-admins-rbac-sp')
