@@ -57,7 +57,7 @@ spec:
         EPHTEST_BASE_URL = "http://$EPHTEST_CONTAINER_NAME:$APP_LISTENING_PORT".concat("/$APP_CONTEXT_ROOT".replace('//', '/'))
 
         // credentials
-        KUBERNETES_CLUSTER_CRED_ID = credentials('ndop-admins-rbac-sp')
+        KUBERNETES_CLUSTER_CRED_ID = "09c9cfc8-ee19-4378-ad9c-7135bc387135"
         CONTAINER_REGISTRY_CRED = credentials("ndop-acr-credential-tenant")
 
         
@@ -90,9 +90,7 @@ spec:
                     sh "podman login $CONTAINER_REGISTRY_URL -u $CONTAINER_REGISTRY_CRED_USR -p $CONTAINER_REGISTRY_CRED_PSW"
                 }
                 container('kubectl') {
-                    withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID",
-                                    clusterName: "$AKS_NAME",
-                                    namespace: "$TENANT_NAMESPACE"]) {
+                    withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID", {
                         sh 'kubectl version'
                     }
                 }
