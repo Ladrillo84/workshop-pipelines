@@ -90,7 +90,7 @@ spec:
                     sh "podman login $CONTAINER_REGISTRY_URL -u $CONTAINER_REGISTRY_CRED_USR -p $CONTAINER_REGISTRY_CRED_PSW"
                 }
                 container('kubectl') {
-                    withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID", {
+                    withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID"]) {
                         sh 'kubectl version'
                     }
                 }
