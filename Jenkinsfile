@@ -31,6 +31,21 @@ spec:
       securityContext:
         runAsUser: 0
         privileged: true
+    - name: azure-cli
+      image: bitnami/azure-cli:latest
+      resources:
+        requests:
+          memory: "256Mi"
+        limits:
+          memory: "256Mi"
+      imagePullPolicy: Always
+      command:
+        - sleep
+      args:
+        - infinity
+      securityContext:
+        runAsUser: 0
+        privileged: true
   volumes:
     - name: m2-cache
       hostPath:
@@ -57,7 +72,7 @@ spec:
         EPHTEST_BASE_URL = "http://$EPHTEST_CONTAINER_NAME:$APP_LISTENING_PORT".concat("/$APP_CONTEXT_ROOT".replace('//', '/'))
 
         // credentials
-        KUBERNETES_CLUSTER_CRED_ID = credentials('ndop-admins-rbac-sp')
+        AAD_SERVICE_PRINCIPAL = credentials('ndop-admins-rbac-sp')
         CONTAINER_REGISTRY_CRED = credentials('ndop-acr-credential-tenant')
         
         // credentials & external systems
@@ -81,9 +96,11 @@ spec:
                     sh 'podman --version'
                     sh "podman login $CONTAINER_REGISTRY_URL -u $CONTAINER_REGISTRY_CRED_USR -p $CONTAINER_REGISTRY_CRED_PSW"
                 }
-                container('kubectl') {
+                container('azure-cli') {
                     sh "az login --service-principal --username $AAD_SERVICE_PRINCIPAL_USR --password $AAD_SERVICE_PRINCIPAL_PSW --tenant $AKS_TENANT"
                     sh "az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_NAME"
+                }
+                container('kubectl') {
                     sh "kubelogin convert-kubeconfig -l spn --client-id $AAD_SERVICE_PRINCIPAL_USR --client-secret $AAD_SERVICE_PRINCIPAL_PSW"
                     sh 'kubectl version'
                 }
