@@ -1,51 +1,9 @@
+@Library('jenkins-library') _
+
+
 pipeline {
     agent {
-        kubernetes {
-            defaultContainer 'jdk'
-            yaml '''
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-    - name: jdk
-      image: docker.io/eclipse-temurin:20.0.1_9-jdk
-      command:
-        - cat
-      tty: true
-      volumeMounts:
-        - name: m2-cache
-          mountPath: /root/.m2
-    - name: podman
-      image: quay.io/containers/podman:v4.5.1
-      command:
-        - cat
-      tty: true
-      securityContext:
-        runAsUser: 0
-        privileged: true
-    - name: aks-builder
-      image: ${imageName}/ndop_aks_builder:latest
-      resources:
-        requests:
-          memory: "2048Mi"
-          cpu: "2000m"
-        limits:
-          memory: "2048Mi"
-          cpu: "2000m"
-      imagePullPolicy: Always
-      command:
-        - sleep
-      args:
-        - infinity
-  imagePullSecrets:
-    - name: $credentialSecret
-  volumes:
-    - name: m2-cache
-      hostPath:
-        path: /data/m2-cache
-        type: DirectoryOrCreate
-'''
-        }
+        kubernetes(containerCall(imageName: ACR_NAME, credentialSecret: SECRET_NAME, tplName: "podman.tpl", nodeSelectorValue: NODE_SELECTOR_VALUE, nodeTaintKey: NODE_TAINT_KEY))
     }
 
     environment {
