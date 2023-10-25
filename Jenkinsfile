@@ -77,6 +77,7 @@ spec:
         // credentials & external systems
         AAD_SERVICE_PRINCIPAL = credentials('ndop-admins-rbac-sp')
         AKS_TENANT = credentials('ndop-aks-tenant')
+        AKS_NAME = credentials('ndop-aks-name')
         AKS_RESOURCE_GROUP = credentials('ndop-aks-resource-group')
         //ACR_NAME = credentials('ndop-acr-name-tenant')
         // change this later
