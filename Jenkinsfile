@@ -23,7 +23,7 @@ spec:
       securityContext:
         runAsUser: 0
         privileged: true
-        - name: aks-builder
+    - name: aks-builder
       image: ${imageName}/ndop_aks_builder:latest
       resources:
         requests:
