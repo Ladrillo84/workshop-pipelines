@@ -1,9 +1,43 @@
-@Library('jenkins-library') _
-
-
 pipeline {
     agent {
-        kubernetes(containerCall(imageName: ACR_NAME, credentialSecret: SECRET_NAME, nodeSelectorValue: NODE_SELECTOR_VALUE, nodeTaintKey: NODE_TAINT_KEY, jdkBlocked: false, podmanBlocked:false, aksBuilderBlocked:false, lighthouseBuilderBlocked:false))
+        kubernetes {
+            defaultContainer 'jdk'
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: jdk
+      image: docker.io/eclipse-temurin:20.0.1_9-jdk
+      command:
+        - cat
+      tty: true
+      volumeMounts:
+        - name: m2-cache
+          mountPath: /root/.m2
+    - name: podman
+      image: quay.io/containers/podman:v4.5.1
+      command:
+        - cat
+      tty: true
+      securityContext:
+        runAsUser: 0
+        privileged: true
+    - name: kubectl
+      image: docker.io/bitnami/kubectl:1.27.3
+      command:
+        - cat
+      tty: true
+      securityContext:
+        runAsUser: 0
+        privileged: true
+  volumes:
+    - name: m2-cache
+      hostPath:
+        path: /data/m2-cache
+        type: DirectoryOrCreate
+'''
+        }
     }
 
     environment {
@@ -23,16 +57,24 @@ pipeline {
         EPHTEST_BASE_URL = "http://$EPHTEST_CONTAINER_NAME:$APP_LISTENING_PORT".concat("/$APP_CONTEXT_ROOT".replace('//', '/'))
 
         // credentials
-        CONTAINER_REGISTRY_CRED = credentials('ndop-acr-credential-tenant')
+        KUBERNETES_CLUSTER_CRED_ID = credentials('ndop-admins-rbac-sp')
+        CONTAINER_REGISTRY_CRED = credentials("ndop-acr-credential-tenant")
+
         
-        // credentials & external systems
         AAD_SERVICE_PRINCIPAL = credentials('ndop-admins-rbac-sp')
         AKS_TENANT = credentials('ndop-aks-tenant')
-        AKS_NAME = credentials('ndop-aks-name')
         AKS_RESOURCE_GROUP = credentials('ndop-aks-resource-group')
+        AKS_NAME = credentials('ndop-aks-name')
+        TENANT_NAMESPACE = credentials('ndop-tenant-namespace')
+
+        
         //ACR_NAME = credentials('ndop-acr-name-tenant')
+        ACR_URL = credentials('ndop-acr-url-tenant')
         // change this later
         ACR_PULL_CREDENTIAL = 'ndop-acr-credential-tenant-secret'
+        SONAR_CREDENTIALS = credentials('ndop-sonar-new-credentials')
+        SELENIUM_HUB_HOST = credentials('ndop-selenium-hub-host')
+        SELENIUM_HUB_PORT = credentials('ndop-selenium-hub-port')
     }
     stages {
         stage('Prepare environment') {
@@ -47,40 +89,18 @@ pipeline {
                     sh 'podman --version'
                     sh "podman login $CONTAINER_REGISTRY_URL -u $CONTAINER_REGISTRY_CRED_USR -p $CONTAINER_REGISTRY_CRED_PSW"
                 }
-                container('aks-builder') {
-                    sh "az login --service-principal --username $AAD_SERVICE_PRINCIPAL_USR --password $AAD_SERVICE_PRINCIPAL_PSW --tenant $AKS_TENANT"
-                    sh "az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_NAME"
-                    sh "kubelogin convert-kubeconfig -l spn --client-id $AAD_SERVICE_PRINCIPAL_USR --client-secret $AAD_SERVICE_PRINCIPAL_PSW"
-                    sh 'kubectl version'
+                container('kubectl') {
+                    withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID",
+                                    clusterName: "$AKS_NAME",
+                                    namespace: "$TENANT_NAMESPACE"]) {
+                        sh 'kubectl version'
+                    }
                 }
                 script {
                     qualityGates = readYaml file: 'quality-gates.yaml'
                 }
             }
         }
-    stage('Compile') {
-        steps {
-            echo '-=- compiling project -=-'
-            sh './mvnw compile'
-        }
-    }
-
-    stage('Unit tests') {
-        steps {
-            echo '-=- execute unit tests -=-'
-            sh './mvnw test org.jacoco:jacoco-maven-plugin:report'
-            junit 'target/surefire-reports/*.xml'
-            jacoco execPattern: 'target/jacoco.exec'
-        }
-    }
-
-    stage('Mutation tests') {
-        steps {
-            echo '-=- execute mutation tests -=-'
-            sh './mvnw org.pitest:pitest-maven:mutationCoverage'
-        }
-    }
-  }
 }
 
 def getPomVersion() {
