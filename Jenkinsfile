@@ -46,8 +46,8 @@ spec:
         APP_CONTEXT_ROOT = '/' // it should be '/' or '<some-context>/'
         APP_LISTENING_PORT = '8080'
         APP_JACOCO_PORT = '6300'
-        CONTAINER_REGISTRY_URL = 'ndoptenant002acracr34668.azurecr.io'
-        IMAGE_ORG = 'ndoptenant002acracr34668.azurecr.io' // change it to your own organization at Docker.io!
+        CONTAINER_REGISTRY_URL = 'docker.io'
+        IMAGE_ORG = 'florenzobootcamp' // change it to your own organization at Docker.io!
         IMAGE_NAME = "$IMAGE_ORG/$APP_NAME"
         IMAGE_SNAPSHOT = "$IMAGE_NAME:$APP_VERSION-snapshot-$BUILD_NUMBER" // tag for snapshot version
         IMAGE_SNAPSHOT_LATEST = "$IMAGE_NAME:latest-snapshot" // tag for latest snapshot version
@@ -57,24 +57,8 @@ spec:
         EPHTEST_BASE_URL = "http://$EPHTEST_CONTAINER_NAME:$APP_LISTENING_PORT".concat("/$APP_CONTEXT_ROOT".replace('//', '/'))
 
         // credentials
-        KUBERNETES_CLUSTER_CRED_ID = "09c9cfc8-ee19-4378-ad9c-7135bc387135"
-        CONTAINER_REGISTRY_CRED = credentials("ndop-acr-credential-tenant")
-
-        
-        AAD_SERVICE_PRINCIPAL = credentials('ndop-admins-rbac-sp')
-        AKS_TENANT = credentials('ndop-aks-tenant')
-        AKS_RESOURCE_GROUP = credentials('ndop-aks-resource-group')
-        AKS_NAME = credentials('ndop-aks-name')
-        TENANT_NAMESPACE = credentials('ndop-tenant-namespace')
-
-        
-        //ACR_NAME = credentials('ndop-acr-name-tenant')
-        ACR_URL = credentials('ndop-acr-url-tenant')
-        // change this later
-        ACR_PULL_CREDENTIAL = 'ndop-acr-credential-tenant-secret'
-        SONAR_CREDENTIALS = credentials('ndop-sonar-new-credentials')
-        SELENIUM_HUB_HOST = credentials('ndop-selenium-hub-host')
-        SELENIUM_HUB_PORT = credentials('ndop-selenium-hub-port')
+        KUBERNETES_CLUSTER_CRED_ID = 'k3s-lima-vm-kubeconfig'
+        CONTAINER_REGISTRY_CRED = credentials("docker-hub-$IMAGE_ORG")
     }
     stages {
         stage('Prepare environment') {
