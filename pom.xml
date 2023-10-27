@@ -144,15 +144,15 @@
             </plugin>
 
             <!-- unit tests (with mocking and code coverage agents enabled) -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
+	    <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
                 <configuration>
+                    <argLine>${jmockit.agentConfig} ${jacoco.utAgentConfig}</argLine>
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**com.steadystate*</exclude>
-                        <exclude>com/gargoylesoftware/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
