@@ -15,6 +15,16 @@ spec:
       volumeMounts:
         - name: m2-cache
           mountPath: /root/.m2
+    - name: lhci
+      image: docker.io/patrickhulce/lhci-client:0.12.0
+      command:
+        - cat
+      tty: true
+      securityContext:
+        runAsUser: 0
+        privileged: true
+  volumes:
+    - name: m2-cache
     - name: podman
       image: quay.io/containers/podman:v4.5.1
       command:
@@ -59,6 +69,8 @@ spec:
         // credentials
         KUBERNETES_CLUSTER_CRED_ID = 'k3s-lima-vm-kubeconfig'
         CONTAINER_REGISTRY_CRED = credentials("docker-hub-$IMAGE_ORG")
+        LIGHTHOUSE_TOKEN = credentials("ci-lighthouse-token-project")
+        LIGHTHOUSE_URL = credentials('ci-lighthouse-url')
     }
         stages {
                 stage('Prepare environment') {
