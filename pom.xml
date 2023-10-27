@@ -97,7 +97,7 @@
             <configuration>
                 <excludes>
                     <exclude>com/gargoylesoftware/**</exclude>
-                </exclues>
+                </excludes>
             </configuration>
             <version>${jacoco.version}</version>
             <classifier>runtime</classifier>
