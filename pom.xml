@@ -115,6 +115,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>${dependency.version}</version>
+                <configuration>
+                        <excludes>
+                                <exclude>com/gargoylesoftware/**</exclude>
+                        </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
