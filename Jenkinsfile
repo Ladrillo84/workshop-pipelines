@@ -12,9 +12,6 @@ spec:
       command:
         - cat
       tty: true
-      volumeMounts:
-        - name: m2-cache
-          mountPath: /root/.m2
     - name: lhci
       image: docker.io/patrickhulce/lhci-client:0.12.0
       command:
@@ -23,6 +20,9 @@ spec:
       securityContext:
         runAsUser: 0
         privileged: true
+      volumeMounts:
+        - name: m2-cache
+          mountPath: /root/.m2
   volumes:
     - name: m2-cache
     - name: podman
