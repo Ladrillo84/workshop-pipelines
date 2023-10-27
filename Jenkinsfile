@@ -23,8 +23,6 @@ spec:
       volumeMounts:
         - name: m2-cache
           mountPath: /root/.m2
-  volumes:
-    - name: m2-cache
     - name: podman
       image: quay.io/containers/podman:v4.5.1
       command:
