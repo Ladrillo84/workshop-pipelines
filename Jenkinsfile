@@ -236,27 +236,27 @@ spec:
             steps {
                 echo '-=- promote container image -=-'
                 container('podman') {
-                    // use latest or a non-snapshot tag to deploy to production
-                    sh "podman tag $IMAGE_SNAPSHOT $ACR_URL/$IMAGE_NAME:$APP_VERSION"
-                    sh "podman push $ACR_URL/$IMAGE_NAME:$APP_VERSION"
-                    sh "podman tag $IMAGE_SNAPSHOT $ACR_URL/$IMAGE_NAME:latest"
-                    sh "podman push $ACR_URL/$IMAGE_NAME:latest"
+                    // when using latest or a non-snapshot tag to deploy GA version
+                    // this tag push should trigger the change in staging/production environment
+                    sh "podman tag $IMAGE_SNAPSHOT $CONTAINER_REGISTRY_URL/$IMAGE_GA"
+                    sh "podman push $CONTAINER_REGISTRY_URL/$IMAGE_GA"
+                    sh "podman tag $IMAGE_SNAPSHOT $CONTAINER_REGISTRY_URL/$IMAGE_GA_LATEST"
+                    sh "podman push $CONTAINER_REGISTRY_URL/$IMAGE_GA_LATEST"
+                }
+            }
+            post {
+                always {
+                    echo '-=- stop test container and remove deployment -=-'
+                    container('kubectl') {
+                        withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID"]) {
+                            sh "kubectl delete pod $EPHTEST_CONTAINER_NAME"
+                            sh "kubectl delete service $EPHTEST_CONTAINER_NAME"
+                            sh "kubectl delete service $EPHTEST_CONTAINER_NAME-jacoco"
+                        }
+                    }
                 }
             }
         }
-    }
-
-    
-    post {
-        always {
-            echo '-=- stop test container and remove deployment -=-'
-            container('aks-builder') {
-                sh "kubectl delete pod $TEST_CONTAINER_NAME"
-                sh "kubectl delete service $TEST_CONTAINER_NAME"
-                sh "kubectl delete service $TEST_CONTAINER_NAME-jacoco"
-            }
-        }
-    }
 }
 
 def getPomVersion() {
