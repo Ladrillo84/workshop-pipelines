@@ -115,11 +115,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>${dependency.version}</version>
-                <configuration>
-                        <excludes>
-                                <exclude>com/gargoylesoftware/**</exclude>
-                        </excludes>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -146,6 +141,17 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>maven-jacoco-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/gargoylesoftware/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <!-- unit tests (with mocking and code coverage agents enabled) -->
