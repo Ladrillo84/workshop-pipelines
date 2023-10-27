@@ -67,7 +67,7 @@ spec:
         // credentials
         KUBERNETES_CLUSTER_CRED_ID = 'k3s-lima-vm-kubeconfig'
         CONTAINER_REGISTRY_CRED = credentials("docker-hub-$IMAGE_ORG")
-        LIGHTHOUSE_TOKEN = credentials("ci-lighthouse-token-project")
+        LIGHTHOUSE_TOKEN = credentials("ci-lighthouse-token-$APP_NAME")
         LIGHTHOUSE_URL = credentials('ci-lighthouse-url')
     }
         stages {
