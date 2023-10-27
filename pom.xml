@@ -153,6 +153,7 @@
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**com.steadystate*</exclude>
+			<exclude>com/gargoylesoftware/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
