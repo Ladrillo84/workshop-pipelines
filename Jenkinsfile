@@ -203,6 +203,15 @@ spec:
             }
         }
 
+        stage('Unit tests') {
+            steps {
+                echo '-=- execute unit tests -=-'
+                sh './mvnw test org.jacoco:jacoco-maven-plugin:report'
+                junit 'target/surefire-reports/*.xml'
+                jacoco execPattern: 'target/jacoco.exec'
+            }
+        }
+
         stage('Integration tests') {
             steps {
                 echo '-=- execute integration tests -=-'
