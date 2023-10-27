@@ -94,6 +94,11 @@
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
+            <configuration>
+                <excludes>
+                    <exclude>com/gargoylesoftware/**</exclude>
+                </exclues>
+            </configuration>
             <version>${jacoco.version}</version>
             <classifier>runtime</classifier>
             <scope>test</scope>
