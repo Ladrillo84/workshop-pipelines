@@ -143,17 +143,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>com/gargoylesoftware/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
             <!-- unit tests (with mocking and code coverage agents enabled) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -163,6 +152,7 @@
                     <argLine>${jmockit.agentConfig} ${jacoco.utAgentConfig}</argLine>
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>com/gargoylesoftware/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
