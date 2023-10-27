@@ -7,6 +7,21 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
+    - name: lighthouse-builder
+      image: ndoppltfoundationarchacr11154.azurecr.io/ndop_lighthouse_builder:latest
+      resources:
+        requests:
+          memory: "512Mi"
+        limits:
+          memory: "512Mi"
+      imagePullPolicy: Always
+      command:
+        - sleep
+      args:
+        - infinity
+      securityContext:
+        runAsUser: 0
+        privileged: true
     - name: jdk
       image: docker.io/eclipse-temurin:20.0.1_9-jdk
       command:
@@ -44,6 +59,8 @@ spec:
       hostPath:
         path: /data/m2-cache
         type: DirectoryOrCreate
+  imagePullSecrets:
+    - name: kiko
 '''
         }
     }
@@ -225,7 +242,7 @@ spec:
                         }
                     }
               }
-            stage('Web page performance analysis') {
+            /*stage('Web page performance analysis') {
                 steps {
                     echo '-=- execute web page performance analysis -=-'
                     container('lhci') {
@@ -238,6 +255,13 @@ spec:
                         """
                     }
               }
+        }*/
+        stage('test') {
+            steps {
+                container('lighthouse-builder') {
+                    sh "lighthouse-ci ${EPHTEST_BASE_URL}hello" + " --jsonReport --report=. --filename=report.html"
+                }
+            }
         }
     }
 }
