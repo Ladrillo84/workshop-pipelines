@@ -152,7 +152,6 @@
                     <argLine>${jmockit.agentConfig} ${jacoco.utAgentConfig}</argLine>
                     <excludes>
                         <exclude>**/*StyleAttributes.java</exclude>
-			<exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
