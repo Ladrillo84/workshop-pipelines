@@ -151,8 +151,7 @@
                 <configuration>
                     <argLine>${jmockit.agentConfig} ${jacoco.utAgentConfig}</argLine>
                     <excludes>
-			<exclude>com.gargoylesoftware.**</exclude>
-                        <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>**/*StyleAttributes.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
