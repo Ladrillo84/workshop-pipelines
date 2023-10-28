@@ -144,25 +144,6 @@
             </plugin>
 
             <!-- unit tests (with mocking and code coverage agents enabled) -->
-		<plugin>
-		    <groupId>org.jacoco</groupId>
-		    <artifactId>jacoco-maven-plugin</artifactId>
-		    <version>${jacoco.version}</version>
-		    <configuration>
-		        <excludes>
-		            <exclude>com.gargoylesoftware.**</exclude>
-		        </excludes>
-		    </configuration>
-		    <executions>
-		        <execution>
-		            <id>jacoco-report</id>
-		            <goals>
-		                <goal>report</goal>
-		            </goals>
-		        </execution>
-		    </executions>
-		</plugin>
-		
 	    <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -170,6 +151,7 @@
                 <configuration>
                     <argLine>${jmockit.agentConfig} ${jacoco.utAgentConfig}</argLine>
                     <excludes>
+			<exclude>com.gargoylesoftware.**</exclude>
                         <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
                 </configuration>
