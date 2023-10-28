@@ -134,6 +134,11 @@
                                     <groupId>org.jacoco</groupId>
                                     <artifactId>org.jacoco.cli</artifactId>
                                     <version>${jacoco.version}</version>
+				    <configuration>
+		        		<excludes>
+		            			<exclude>com.gargoylesoftware.**</exclude>
+		       			</excludes>
+		    		    </configuration>
                                     <classifier>nodeps</classifier>
                                     <destFileName>jacococli.jar</destFileName>
                                 </artifactItem>
