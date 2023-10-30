@@ -235,13 +235,20 @@ spec:
         }
 
         
-        stage('test') {
+        stage('Web page performance analysis') {
             steps {
-                container('lighthouse-builder') {
-                    sh "lighthouse-ci ${EPHTEST_BASE_URL}hello" + " --jsonReport --report=. --filename=report.html"
+                echo '-=- execute web page performance analysis -=-'
+                container('lhci') {
+                    sh """
+                      cd $WORKSPACE
+                      git config --global --add safe.directory $WORKSPACE
+                      export LHCI_BUILD_CONTEXT__CURRENT_BRANCH=$GIT_BRANCH
+                      lhci collect --collect.settings.chromeFlags='--no-sandbox' --url ${EPHTEST_BASE_URL}hello
+                      lhci upload --token $LIGHTHOUSE_TOKEN --serverBaseUrl $LIGHTHOUSE_URL --ignoreDuplicateBuildFailure
+                    """
                 }
             }
-        }
+       }
                      
         stage('Promote container image') {
             steps {
