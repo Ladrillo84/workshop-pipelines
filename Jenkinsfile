@@ -129,12 +129,6 @@ spec:
             }
         }
 
-        stage('Generate BOM') {
-            steps {
-                sh './mvnw org.cyclonedx:cyclonedx-maven-plugin:makeBom'
-            }
-        }
-
             stage('Software composition analysis') {
                 steps {
                     echo '-=- run software composition analysis -=-'
