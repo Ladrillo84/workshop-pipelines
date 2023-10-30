@@ -77,6 +77,8 @@ spec:
         LIGHTHOUSE_TOKEN = credentials("ci-lighthouse-token-$APP_NAME")
         LIGHTHOUSE_URL = credentials('ci-lighthouse-url')
     }
+
+    
     stages {
             stage('Prepare environment') {
                 steps {
