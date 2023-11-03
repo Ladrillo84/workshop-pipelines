@@ -192,6 +192,7 @@ spec:
                 }
             }
         }
+    }
 
         post {
             always {
