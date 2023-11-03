@@ -94,9 +94,9 @@
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
+            <version>${jacoco.version}</version>
             <classifier>runtime</classifier>
             <scope>test</scope>
-            <version>${jacoco.version}</version>
         </dependency>
     </dependencies>
 
@@ -144,11 +144,12 @@
             </plugin>
 
             <!-- unit tests (with mocking and code coverage agents enabled) -->
-	    <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
-	        <configuration>
+                <configuration>
+                    <argLine>${jmockit.agentConfig} ${jacoco.utAgentConfig}</argLine>
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
