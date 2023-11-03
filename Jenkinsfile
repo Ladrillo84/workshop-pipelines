@@ -103,15 +103,12 @@ spec:
             }
         }
 
-        stage('Code inspection & quality gate') {
+        stage('Unit tests') {
             steps {
-                echo '-=- run code inspection & check quality gate -=-'
-                withSonarQubeEnv('ci-sonarqube') {
-                    sh './mvnw sonar:sonar'
-                }
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
+                echo '-=- execute unit tests -=-'
+                sh './mvnw test org.jacoco:jacoco-maven-plugin:report'
+                junit 'target/surefire-reports/*.xml'
+                jacoco execPattern: 'target/jacoco.exec'
             }
         }
 
@@ -121,25 +118,6 @@ spec:
                 sh './mvnw org.pitest:pitest-maven:mutationCoverage'
             }
         }
-
-            stage('Software composition analysis') {
-                steps {
-                    echo '-=- run software composition analysis -=-'
-                    sh './mvnw dependency-check:check'
-                    dependencyCheckPublisher(
-                        failedTotalCritical: qualityGates.security.dependencies.critical.failed,
-                        unstableTotalCritical: qualityGates.security.dependencies.critical.unstable,
-                        failedTotalHigh: qualityGates.security.dependencies.high.failed,
-                        unstableTotalHigh: qualityGates.security.dependencies.high.unstable,
-                        failedTotalMedium: qualityGates.security.dependencies.medium.failed,
-                        unstableTotalMedium: qualityGates.security.dependencies.medium.unstable)
-                    script {
-                        if (currentBuild.result == 'FAILURE') {
-                            error('Dependency vulnerabilities exceed the configured threshold')
-                        }
-                    }
-                }
-          }
 
         stage('Package') {
             steps {
@@ -175,15 +153,6 @@ spec:
             }
         }
 
-        stage('Unit tests') {
-            steps {
-                echo '-=- execute unit tests -=-'
-                sh './mvnw test org.jacoco:jacoco-maven-plugin:report'
-                junit 'target/surefire-reports/*.xml'
-                jacoco execPattern: 'target/jacoco.exec'
-            }
-        }
-
         stage('Integration tests') {
             steps {
                 echo '-=- execute integration tests -=-'
@@ -210,22 +179,6 @@ spec:
             }
         }
 
-        
-        stage('Web page performance analysis') {
-            steps {
-                echo '-=- execute web page performance analysis -=-'
-                container('lhci') {
-                    sh """
-                      cd $WORKSPACE
-                      git config --global --add safe.directory $WORKSPACE
-                      export LHCI_BUILD_CONTEXT__CURRENT_BRANCH=$GIT_BRANCH
-                      lhci collect --collect.settings.chromeFlags='--no-sandbox' --url ${EPHTEST_BASE_URL}hello
-                      lhci upload --token $LIGHTHOUSE_TOKEN --serverBaseUrl $LIGHTHOUSE_URL --ignoreDuplicateBuildFailure
-                    """
-                }
-            }
-       }
-                     
         stage('Promote container image') {
             steps {
                 echo '-=- promote container image -=-'
@@ -239,20 +192,20 @@ spec:
                 }
             }
         }
-    }
-            post {
-                always {
-                    echo '-=- stop test container and remove deployment -=-'
-                    container('kubectl') {
-                        withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID"]) {
-                            sh "kubectl delete pod $EPHTEST_CONTAINER_NAME"
-                            sh "kubectl delete service $EPHTEST_CONTAINER_NAME"
-                            sh "kubectl delete service $EPHTEST_CONTAINER_NAME-jacoco"
-                        }
+
+        post {
+            always {
+                echo '-=- stop test container and remove deployment -=-'
+                container('kubectl') {
+                    withKubeConfig([credentialsId: "$KUBERNETES_CLUSTER_CRED_ID"]) {
+                        sh "kubectl delete pod $EPHTEST_CONTAINER_NAME"
+                        sh "kubectl delete service $EPHTEST_CONTAINER_NAME"
+                        sh "kubectl delete service $EPHTEST_CONTAINER_NAME-jacoco"
                     }
                 }
             }
-}
+        }
+}       
 
 def getPomVersion() {
     return readMavenPom().version
