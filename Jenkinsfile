@@ -238,6 +238,8 @@ spec:
                     sh "podman push $CONTAINER_REGISTRY_URL/$IMAGE_GA_LATEST"
                 }
             }
+        }
+    }
             post {
                 always {
                     echo '-=- stop test container and remove deployment -=-'
@@ -250,8 +252,6 @@ spec:
                     }
                 }
             }
-       }
-   }
 }
 
 def getPomVersion() {
